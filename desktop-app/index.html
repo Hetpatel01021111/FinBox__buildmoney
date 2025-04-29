@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinBox Receipt Scanner</title>
+  <style>
+    :root {
+      --primary-color: #3B82F6;
+      --primary-gradient: linear-gradient(to right, #3B82F6, #8B5CF6);
+      --success-color: #06D6A0;
+      --error-color: #FF6B6B;
+      --text-color: #1F2937;
+      --light-bg: #F9FAFB;
+      --border-color: #E5E7EB;
+      --border-radius: 12px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    
+    body {
+      background-color: var(--light-bg);
+      color: var(--text-color);
+      padding: 1.5rem;
+      overflow-x: hidden;
+    }
+    
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .logo {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 1rem;
+    }
+    
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .subtitle {
+      color: #6B7280;
+      font-size: 0.875rem;
+    }
+    
+    .card {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 1.5rem;
+    }
+    
+    .auth-section {
+      display: none;
+    }
+    
+    .scanner-section {
+      display: none;
+    }
+    
+    .result-section {
+      display: none;
+    }
+    
+    .input-group {
+      margin-bottom: 1rem;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      font-size: 0.875rem;
+    }
+    
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      border-color: var(--primary-color);
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      font-size: 1rem;
+      gap: 0.5rem;
+    }
+    
+    .btn-primary {
+      background: var(--primary-gradient);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+    
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+    }
+    
+    .btn-outline:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    
+    .btn-block {
+      width: 100%;
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 0.75rem;
+    }
+    
+    .status {
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+    }
+    
+    .status-info {
+      background-color: rgba(59, 130, 246, 0.1);
+      color: var(--primary-color);
+    }
+    
+    .status-success {
+      background-color: rgba(6, 214, 160, 0.1);
+      color: var(--success-color);
+    }
+    
+    .status-error {
+      background-color: rgba(255, 107, 107, 0.1);
+      color: var(--error-color);
+    }
+    
+    .file-preview {
+      width: 100%;
+      height: 200px;
+      border-radius: 0.5rem;
+      object-fit: contain;
+      background-color: #F3F4F6;
+      margin-bottom: 1rem;
+      border: 1px dashed var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #9CA3AF;
+    }
+    
+    .file-preview img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 0.5rem;
+    }
+    
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .result-item:last-child {
+      border-bottom: none;
+    }
+    
+    .result-label {
+      font-weight: 500;
+      color: #6B7280;
+    }
+    
+    .result-value {
+      font-weight: 500;
+    }
+    
+    .category-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 1rem;
+      font-size: 0.75rem;
+      background-color: rgba(59, 130, 246, 0.1);
+      color: var(--primary-color);
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="assets/logo.png" alt="FinBox Logo" class="logo" id="logo-placeholder">
+      <h1>FinBox Receipt Scanner</h1>
+      <p class="subtitle">Quickly scan receipts and add transactions</p>
+    </div>
+    
+    <!-- Authentication Section -->
+    <div class="card auth-section" id="auth-section">
+      <div class="status status-info">
+        <p>To get started, log in to your FinBox account.</p>
+      </div>
+      <button class="btn btn-primary btn-block" id="login-btn">
+        <span>Sign In with FinBox</span>
+      </button>
+      <p class="subtitle" style="margin-top: 1rem; text-align: center;">
+        This will open the FinBox login page in a new window
+      </p>
+    </div>
+    
+    <!-- Scanner Section -->
+    <div class="card scanner-section" id="scanner-section">
+      <div id="status-container"></div>
+      
+      <div class="file-preview" id="file-preview">
+        <span id="preview-placeholder">Select a receipt image to scan</span>
+        <img id="preview-image" class="hidden">
+      </div>
+      
+      <div class="btn-group">
+        <button class="btn btn-primary" style="flex: 1;" id="select-file-btn">
+          <span>Select Receipt</span>
+        </button>
+        <button class="btn btn-primary" style="flex: 1;" id="scan-btn" disabled>
+          <span>Scan Receipt</span>
+        </button>
+      </div>
+      
+      <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border-color);">
+      
+      <div class="btn-group">
+        <button class="btn btn-outline" style="flex: 1;" id="logout-btn">
+          <span>Logout</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Result Section -->
+    <div class="card result-section" id="result-section">
+      <h2 style="margin-bottom: 1rem;">Scan Results</h2>
+      
+      <div class="result-item">
+        <span class="result-label">Amount</span>
+        <span class="result-value" id="result-amount">$0.00</span>
+      </div>
+      
+      <div class="result-item">
+        <span class="result-label">Date</span>
+        <span class="result-value" id="result-date">-</span>
+      </div>
+      
+      <div class="result-item">
+        <span class="result-label">Merchant</span>
+        <span class="result-value" id="result-merchant">-</span>
+      </div>
+      
+      <div class="result-item">
+        <span class="result-label">Description</span>
+        <span class="result-value" id="result-description">-</span>
+      </div>
+      
+      <div class="result-item">
+        <span class="result-label">Category</span>
+        <span class="category-badge" id="result-category">-</span>
+      </div>
+      
+      <div class="btn-group" style="margin-top: 1.5rem;">
+        <button class="btn btn-primary" style="flex: 1;" id="add-transaction-btn">
+          <span>Add Transaction</span>
+        </button>
+        <button class="btn btn-outline" style="flex: 1;" id="back-btn">
+          <span>Scan Another</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const { ipcRenderer } = require('electron');
+    const path = require('path');
+    
+    // Elements
+    const authSection = document.getElementById('auth-section');
+    const scannerSection = document.getElementById('scanner-section');
+    const resultSection = document.getElementById('result-section');
+    const loginBtn = document.getElementById('login-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    const selectFileBtn = document.getElementById('select-file-btn');
+    const scanBtn = document.getElementById('scan-btn');
+    const filePreview = document.getElementById('file-preview');
+    const previewPlaceholder = document.getElementById('preview-placeholder');
+    const previewImage = document.getElementById('preview-image');
+    const statusContainer = document.getElementById('status-container');
+    const resultAmount = document.getElementById('result-amount');
+    const resultDate = document.getElementById('result-date');
+    const resultMerchant = document.getElementById('result-merchant');
+    const resultDescription = document.getElementById('result-description');
+    const resultCategory = document.getElementById('result-category');
+    const addTransactionBtn = document.getElementById('add-transaction-btn');
+    const backBtn = document.getElementById('back-btn');
+    
+    // Variables
+    let selectedFilePath = null;
+    let scanResults = null;
+    
+    // Show status message
+    function showStatus(message, type = 'info') {
+      const statusDiv = document.createElement('div');
+      statusDiv.className = `status status-${type}`;
+      statusDiv.textContent = message;
+      
+      statusContainer.innerHTML = '';
+      statusContainer.appendChild(statusDiv);
+      
+      // Auto clear success/info messages after 5 seconds
+      if (type !== 'error') {
+        setTimeout(() => {
+          statusDiv.remove();
+        }, 5000);
+      }
+    }
+    
+    // Format date
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    }
+    
+    // Initialize the app
+    async function initApp() {
+      try {
+        // Check if we have a token
+        const isValid = await ipcRenderer.invoke('verify-token');
+        
+        if (isValid.valid) {
+          // Show scanner section
+          authSection.style.display = 'none';
+          scannerSection.style.display = 'block';
+          resultSection.style.display = 'none';
+          showStatus('Ready to scan receipts', 'info');
+        } else {
+          // Show auth section
+          authSection.style.display = 'block';
+          scannerSection.style.display = 'none';
+          resultSection.style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Error initializing app:', error);
+        showStatus('Error initializing app: ' + error.message, 'error');
+        
+        // Default to auth section
+        authSection.style.display = 'block';
+        scannerSection.style.display = 'none';
+        resultSection.style.display = 'none';
+      }
+    }
+    
+    // Login
+    loginBtn.addEventListener('click', async () => {
+      try {
+        showStatus('Opening FinBox login...', 'info');
+        
+        // Open the login window
+        const result = await ipcRenderer.invoke('login');
+        
+        // The login process is now handled in the main process
+        // The main process will send 'login-success' or 'login-error' events
+      } catch (error) {
+        console.error('Login error:', error);
+        showStatus(`Error: ${error.message}`, 'error');
+      }
+    });
+    
+    // Listen for login success event
+    ipcRenderer.on('login-success', (event, token) => {
+      // Show scanner section
+      authSection.style.display = 'none';
+      scannerSection.style.display = 'block';
+      
+      showStatus('Authentication successful', 'success');
+    });
+    
+    // Listen for login error event
+    ipcRenderer.on('login-error', (event, errorMessage) => {
+      showStatus(`Error: ${errorMessage}`, 'error');
+    });
+    
+    // Logout
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await ipcRenderer.invoke('clear-token');
+        
+        // Show auth section
+        authSection.style.display = 'block';
+        scannerSection.style.display = 'none';
+        resultSection.style.display = 'none';
+        
+        // Reset state
+        selectedFilePath = null;
+        scanResults = null;
+        previewImage.classList.add('hidden');
+        previewPlaceholder.textContent = 'Select a receipt image to scan';
+        previewPlaceholder.classList.remove('hidden');
+        scanBtn.disabled = true;
+      } catch (error) {
+        console.error('Logout error:', error);
+        showStatus('Logout error: ' + error.message, 'error');
+      }
+    });
+    
+    // Select file
+    selectFileBtn.addEventListener('click', async () => {
+      try {
+        const filePath = await ipcRenderer.invoke('select-file');
+        
+        if (filePath) {
+          selectedFilePath = filePath;
+          
+          // Show preview
+          previewPlaceholder.classList.add('hidden');
+          previewImage.src = `file://${filePath}`;
+          previewImage.classList.remove('hidden');
+          
+          // Enable scan button
+          scanBtn.disabled = false;
+          
+          showStatus(`Selected file: ${path.basename(filePath)}`, 'info');
+        }
+      } catch (error) {
+        console.error('File selection error:', error);
+        showStatus('File selection error: ' + error.message, 'error');
+      }
+    });
+    
+    // Scan receipt
+    scanBtn.addEventListener('click', async () => {
+      if (!selectedFilePath) {
+        showStatus('Please select a receipt image first', 'error');
+        return;
+      }
+      
+      try {
+        // Disable scan button
+        scanBtn.disabled = true;
+        scanBtn.innerHTML = '<span class="loading"></span> Scanning...';
+        
+        // Scan receipt
+        const result = await ipcRenderer.invoke('scan-receipt', selectedFilePath);
+        
+        if (result && result.success && result.data) {
+          scanResults = result.data;
+          
+          // Update result section
+          resultAmount.textContent = `$${scanResults.amount.toFixed(2)}`;
+          resultDate.textContent = formatDate(scanResults.date);
+          resultMerchant.textContent = scanResults.merchantName || '-';
+          resultDescription.textContent = scanResults.description || '-';
+          resultCategory.textContent = scanResults.category || '-';
+          
+          // Show result section
+          authSection.style.display = 'none';
+          scannerSection.style.display = 'none';
+          resultSection.style.display = 'block';
+        } else {
+          showStatus('Failed to scan receipt', 'error');
+        }
+      } catch (error) {
+        console.error('Scan error:', error);
+        showStatus('Scan error: ' + error.message, 'error');
+      } finally {
+        // Reset scan button
+        scanBtn.disabled = false;
+        scanBtn.innerHTML = '<span>Scan Receipt</span>';
+      }
+    });
+    
+    // Add transaction
+    addTransactionBtn.addEventListener('click', () => {
+      // Open transaction form in browser with pre-filled data
+      const params = new URLSearchParams({
+        amount: scanResults.amount,
+        description: scanResults.description || '',
+        category: scanResults.category || '',
+        date: new Date(scanResults.date).toISOString().split('T')[0]
+      });
+      
+      require('electron').shell.openExternal(`http://localhost:3000/transaction?${params.toString()}`);
+    });
+    
+    // Back to scanner
+    backBtn.addEventListener('click', () => {
+      // Reset state
+      selectedFilePath = null;
+      scanResults = null;
+      previewImage.classList.add('hidden');
+      previewPlaceholder.textContent = 'Select a receipt image to scan';
+      previewPlaceholder.classList.remove('hidden');
+      scanBtn.disabled = true;
+      
+      // Show scanner section
+      authSection.style.display = 'none';
+      scannerSection.style.display = 'block';
+      resultSection.style.display = 'none';
+    });
+    
+    // Listen for scan status updates
+    ipcRenderer.on('scan-status', (event, message) => {
+      showStatus(message, 'info');
+    });
+    
+    // Initialize the app
+    initApp();
+  </script>
+</body>
+</html>
