@@ -1,0 +1,14 @@
+directories:
+  output: dist
+  buildResources: build
+appId: com.finbox.receipt-scanner
+productName: FinBox Receipt Scanner
+mac:
+  category: public.app-category.finance
+  icon: assets/icon.icns
+win:
+  icon: assets/icon.ico
+linux:
+  icon: assets/icon.png
+files: []
+electronVersion: 28.3.3
