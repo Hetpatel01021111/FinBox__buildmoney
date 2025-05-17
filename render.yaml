@@ -11,6 +11,10 @@ services:
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
-        sync: false
+        value: postgres://postgres.rjyvejjckbzbntraxajj:11%2F11%2F2006Himani@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?pgbouncer=true
       - key: DIRECT_URL
-        sync: false
+        value: postgres://postgres.rjyvejjckbzbntraxajj:11%2F11%2F2006Himani@aws-0-ap-south-1.pooler.supabase.com:5432/postgres
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        value: https://rjyvejjckbzbntraxajj.supabase.co
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJqeXZlampja2J6Ym50cmF4YWpqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NzI1MzgsImV4cCI6MjA2MTA0ODUzOH0.sQoh5KOdhM13b_4USCBzsA0cSfP6YDZgq_qlRspiyOE

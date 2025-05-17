@@ -1,6 +1,12 @@
 {
   "version": 2,
-  "buildCommand": "npm install --legacy-peer-deps && npm install prisma && npx prisma generate && next build",
   "installCommand": "npm install --legacy-peer-deps",
-  "framework": "nextjs"
+  "buildCommand": "npx prisma generate && next build",
+  "framework": "nextjs",
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "https://rjyvejjckbzbntraxajj.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJqeXZlampja2J6Ym50cmF4YWpqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NzI1MzgsImV4cCI6MjA2MTA0ODUzOH0.sQoh5KOdhM13b_4USCBzsA0cSfP6YDZgq_qlRspiyOE",
+    "DATABASE_URL": "postgres://postgres.rjyvejjckbzbntraxajj:11%2F11%2F2006Himani@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?pgbouncer=true",
+    "DIRECT_URL": "postgres://postgres.rjyvejjckbzbntraxajj:11%2F11%2F2006Himani@aws-0-ap-south-1.pooler.supabase.com:5432/postgres"
+  }
 }
