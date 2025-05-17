@@ -1,0 +1,71 @@
+// This is a special Prisma schema for Vercel deployment
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // Hard-coded URL format for build time only - actual credentials will be provided by environment variables at runtime
+  url      = "postgres://postgres:password@aws-0-ap-south-1.pooler.supabase.com:5432/postgres"
+}
+
+// Copy your models from the main schema.prisma file
+model User {
+  id            String    @id @default(uuid())
+  clerkUserId   String    @unique // clerk user id
+  email         String    @unique
+  name          String?
+  imageUrl      String?
+  transactions  Transaction[]
+  accounts      Account[]
+  budgets       Budget[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model Account {
+  id            String    @id @default(uuid())
+  name          String
+  balance       Float     @default(0)
+  type          String    @default("checking")
+  color         String    @default("#000000")
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions  Transaction[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+model Transaction {
+  id            String    @id @default(uuid())
+  amount        Float
+  description   String
+  category      String
+  date          DateTime  @default(now())
+  type          String    @default("expense")
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId     String
+  account       Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([accountId])
+}
+
+model Budget {
+  id            String    @id @default(uuid())
+  name          String
+  amount        Float
+  category      String
+  period        String    @default("monthly")
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([userId])
+}
