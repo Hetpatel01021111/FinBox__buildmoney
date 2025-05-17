@@ -2,21 +2,22 @@
 const nextConfig = {
   experimental: {
     serverActions: {
-      allowedOrigins: ['localhost:3000', '*.vercel.app']
+      allowedOrigins: ['localhost:3000', '*.vercel.app', '*.github.io']
     },
   },
   images: {
     domains: ['randomuser.me'],
+    unoptimized: true,
   },
-  // Special handling for Vercel deployment
+  // Special handling for deployment
   env: {
-    NEXT_PUBLIC_VERCEL_ENV: process.env.VERCEL_ENV || 'development',
+    NEXT_PUBLIC_ENV: process.env.NODE_ENV || 'development',
   },
-}
-
-// This helps with Prisma issues during build
-if (process.env.VERCEL) {
-  console.log('Building on Vercel...');
+  // For GitHub Pages
+  output: 'export',
+  distDir: 'out',
+  // GitHub Pages adds a trailing slash by default
+  trailingSlash: true,
 }
 
 module.exports = nextConfig
