@@ -2,6 +2,7 @@ services:
   - type: web
     name: finbox
     env: node
+    plan: free
     buildCommand: npm install --legacy-peer-deps && npm run build
     startCommand: npm start
     envVars:
@@ -9,3 +10,7 @@ services:
         value: 18
       - key: NODE_ENV
         value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
