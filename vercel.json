@@ -4,6 +4,8 @@
   "installCommand": "npm install --legacy-peer-deps",
   "framework": "nextjs",
   "env": {
-    "NODE_OPTIONS": "--max_old_space_size=4096"
-  }
+    "NODE_OPTIONS": "--max_old_space_size=4096",
+    "NEXT_TELEMETRY_DISABLED": "1"
+  },
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./ || echo 'Skip deploy since no changes were made to this directory'"
 }
