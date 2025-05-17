@@ -1,6 +1,7 @@
 {
   "version": 2,
   "framework": "nextjs",
+  "buildCommand": "npm run vercel-build",
   "env": {
     "NODE_OPTIONS": "--max_old_space_size=4096",
     "NEXT_TELEMETRY_DISABLED": "1"
