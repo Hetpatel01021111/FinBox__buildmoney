@@ -4,7 +4,7 @@ import { BarLoader } from "react-spinners";
 import { TransactionTable } from "../_components/transaction-table";
 import { notFound } from "next/navigation";
 import { AccountChart } from "../_components/account-chart";
-import { motion } from "framer-motion";
+// Removed framer-motion import as it causes issues with server components
 
 export default async function AccountPage({ params }) {
   const { id } = await params;
