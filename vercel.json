@@ -1,15 +1,8 @@
 {
   "version": 2,
-  "buildCommand": "npm run vercel-build",
   "framework": "nextjs",
   "env": {
     "NODE_OPTIONS": "--max_old_space_size=4096",
     "NEXT_TELEMETRY_DISABLED": "1"
-  },
-  "build": {
-    "env": {
-      "DATABASE_URL": "postgres://placeholder-will-be-replaced-in-vercel-dashboard",
-      "DIRECT_URL": "postgres://placeholder-will-be-replaced-in-vercel-dashboard"
-    }
   }
 }
